@@ -4,13 +4,19 @@
  */
 package etu2025.framework.servlet;
 
+import etu2025.framework.annotation.url;
+import etu2025.framework.util.Utils;
+import etu2025.framework.Mapping;
+import etu2025.model.Personne;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -18,19 +24,55 @@ import java.util.HashMap;
  */
 public class FrontServlet extends HttpServlet {
     HashMap<String, Mapping> mappingUrls;
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+
+    public void addMappingUrls(Class c) {
+        Method[] methods = c.getDeclaredMethods();
+        for (Method method : methods) {
+            url[] a = method.getAnnotationsByType(url.class);
+            if (a.length > 0) {
+                getMappingUrls().put(a[0].value(), new Mapping(c.getSimpleName(), method.getName()));
+            }
+        }
+    }
+    
+    public HashMap<String, Mapping> getMappingUrls() {
+        return mappingUrls;
+    }
+
+    public void setMappingUrls(HashMap<String, Mapping> mappingUrls) {
+        this.mappingUrls = mappingUrls;
+    }
+    
+    public void setMappingUrls(String path) {
+        try {
+            List<Class> lc = Utils.getClassFrom(path);
+            setMappingUrls(new HashMap<String, Mapping>());
+            for (Class c : lc) {
+                for (Method m : c.getDeclaredMethods()) {
+                    url u = m.getAnnotation(url.class);
+                    if (u  != null) {
+                       getMappingUrls().put(u.value() , new Mapping(c.getSimpleName(), m.getName()));
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+
+    @Override
+    public void init() throws ServletException {
+        super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+        setMappingUrls("etu2025.model");
+    }
+
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
+        PrintWriter out = response.getWriter();
+
+        try  {
+
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -43,6 +85,9 @@ public class FrontServlet extends HttpServlet {
             out.println("<h1><u> Url </u>at " + getUrl(request) + "</h1>");
             out.println("</body>");
             out.println("</html>");
+            Method m = getMethodFromUrl(getUrl(request));
+            m.invoke(new Personne(),null);
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -93,11 +138,25 @@ public class FrontServlet extends HttpServlet {
         String url = request.getRequestURI();
         result = url.split(contextPath)[1];
         String query = request.getQueryString();
-        if (query!=null)   {
-            result = result.concat("?" + query);
-        }
         return result;
     }
+    
+    public Method getMethodFromUrl(String url) throws Exception {
+        
+        List<Class> lc = Utils.getClassFrom("etu2025.model");
+        for (Class c : lc) {
+            if (c.getSimpleName()==getMappingUrls().get(url).getClassName()) {
+                for (Method m : c.getDeclaredMethods()) {
+                    if (m.getName()==getMappingUrls().get(url).getMethod()){
+                        return m;
+                    }
+                }
+            }
+        }
+        throw new Exception("Method not found");
+    }
+    
+    
     
     
 }
