@@ -7,7 +7,6 @@ package etu2025.framework.servlet;
 import etu2025.framework.annotation.url;
 import etu2025.framework.util.Utils;
 import etu2025.framework.Mapping;
-import etu2025.model.Personne;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -25,16 +24,6 @@ import java.util.List;
 public class FrontServlet extends HttpServlet {
     HashMap<String, Mapping> mappingUrls;
 
-    public void addMappingUrls(Class c) {
-        Method[] methods = c.getDeclaredMethods();
-        for (Method method : methods) {
-            url[] a = method.getAnnotationsByType(url.class);
-            if (a.length > 0) {
-                getMappingUrls().put(a[0].value(), new Mapping(c.getSimpleName(), method.getName()));
-            }
-        }
-    }
-    
     public HashMap<String, Mapping> getMappingUrls() {
         return mappingUrls;
     }
@@ -86,7 +75,6 @@ public class FrontServlet extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
             Method m = getMethodFromUrl(getUrl(request));
-            m.invoke(new Personne(),null);
             
         } catch (Exception e) {
             e.printStackTrace();
