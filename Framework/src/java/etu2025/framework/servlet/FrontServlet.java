@@ -7,6 +7,8 @@ package etu2025.framework.servlet;
 import etu2025.framework.annotation.url;
 import etu2025.framework.util.Utils;
 import etu2025.framework.Mapping;
+import etu2025.framework.ModelView;
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -76,18 +78,16 @@ public class FrontServlet extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
             out.println(lc.size());
-            for (Class c : lc) {
-                out.println(c.getSimpleName());
-            } 
-            for (Map.Entry<String, Mapping> entry : mappingUrls.entrySet()) {
-                out.println(entry.getKey());
-                 out.println(((Mapping)entry.getValue()).getClassName());
-                 out.println(((Mapping)entry.getValue()).getMethod());
-
-            }
             Method m = getMethodFromUrl(getUrl(request));
             Class c = getClassFromUrl(getUrl(request));
-            m.invoke(c.newInstance(), null);
+            Object o = m.invoke(c.newInstance(), null);
+            out.println(o);
+            if (o instanceof ModelView) {
+                out.println("lll");
+                ModelView mv = (ModelView)o;
+                RequestDispatcher dispatcher = request.getRequestDispatcher(mv.getView());
+                dispatcher.forward(request, response);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
