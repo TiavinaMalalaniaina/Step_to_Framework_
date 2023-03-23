@@ -7,7 +7,6 @@ package etu2025.framework.servlet;
 import etu2025.framework.annotation.url;
 import etu2025.framework.util.Utils;
 import etu2025.framework.Mapping;
-import etu2025.model.Personne;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -17,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -25,16 +25,6 @@ import java.util.List;
 public class FrontServlet extends HttpServlet {
     HashMap<String, Mapping> mappingUrls;
 
-    public void addMappingUrls(Class c) {
-        Method[] methods = c.getDeclaredMethods();
-        for (Method method : methods) {
-            url[] a = method.getAnnotationsByType(url.class);
-            if (a.length > 0) {
-                getMappingUrls().put(a[0].value(), new Mapping(c.getSimpleName(), method.getName()));
-            }
-        }
-    }
-    
     public HashMap<String, Mapping> getMappingUrls() {
         return mappingUrls;
     }
@@ -72,7 +62,7 @@ public class FrontServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try  {
-
+            List<Class> lc = Utils.getClassFrom("etu2025.model");
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -85,9 +75,19 @@ public class FrontServlet extends HttpServlet {
             out.println("<h1><u> Url </u>at " + getUrl(request) + "</h1>");
             out.println("</body>");
             out.println("</html>");
+            out.println(lc.size());
+            for (Class c : lc) {
+                out.println(c.getSimpleName());
+            } 
+            for (Map.Entry<String, Mapping> entry : mappingUrls.entrySet()) {
+                out.println(entry.getKey());
+                 out.println(((Mapping)entry.getValue()).getClassName());
+                 out.println(((Mapping)entry.getValue()).getMethod());
+
+            }
             Method m = getMethodFromUrl(getUrl(request));
-            m.invoke(new Personne(),null);
-            
+            Class c = getClassFromUrl(getUrl(request));
+            m.invoke(c.newInstance(), null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,9 +145,9 @@ public class FrontServlet extends HttpServlet {
         
         List<Class> lc = Utils.getClassFrom("etu2025.model");
         for (Class c : lc) {
-            if (c.getSimpleName()==getMappingUrls().get(url).getClassName()) {
+            if (c.getSimpleName().equals(getMappingUrls().get(url).getClassName())) {
                 for (Method m : c.getDeclaredMethods()) {
-                    if (m.getName()==getMappingUrls().get(url).getMethod()){
+                    if (m.getName().equals(getMappingUrls().get(url).getMethod())){
                         return m;
                     }
                 }
@@ -155,6 +155,21 @@ public class FrontServlet extends HttpServlet {
         }
         throw new Exception("Method not found");
     }
+    public Class getClassFromUrl(String url) throws Exception {
+        
+        List<Class> lc = Utils.getClassFrom("etu2025.model");
+        for (Class c : lc) {
+            if (c.getSimpleName().equals(getMappingUrls().get(url).getClassName())) {
+                for (Method m : c.getDeclaredMethods()) {
+                    if (m.getName().equals(getMappingUrls().get(url).getMethod())){
+                        return c;
+                    }
+                }
+            }
+        }
+        throw new Exception("Method not found");
+    }
+    
     
     
     
