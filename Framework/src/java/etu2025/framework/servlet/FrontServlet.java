@@ -9,6 +9,7 @@ import etu2025.framework.util.Utils;
 import etu2025.framework.Mapping;
 import etu2025.framework.ModelView;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,7 @@ import java.util.Map;
  */
 public class FrontServlet extends HttpServlet {
     HashMap<String, Mapping> mappingUrls;
+    private ArrayList<Class> classList;
 
     public HashMap<String, Mapping> getMappingUrls() {
         return mappingUrls;
@@ -46,17 +49,33 @@ public class FrontServlet extends HttpServlet {
                        getMappingUrls().put(u.value() , new Mapping(c.getSimpleName(), m.getName()));
                     }
                 }
+                getClassList().add(c);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
     
+    public ArrayList<Class> getClassList() {
+        return classList;
+    }
+
+    public void setClassList(ArrayList<Class> classList) {
+        this.classList = classList;
+    }
+    
+    
+    
+    
+   
+    
 
     @Override
-    public void init() throws ServletException {
-        super.init(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
-        setMappingUrls("etu2025.model");
+    public void init(ServletConfig config) throws ServletException {
+        super.init();
+        String packageModel = config.getInitParameter("model-package");
+        setClassList(new ArrayList<Class>());
+        setMappingUrls(packageModel);
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -64,8 +83,6 @@ public class FrontServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try  {
-            List<Class> lc = Utils.getClassFrom("etu2025.model");
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -77,13 +94,11 @@ public class FrontServlet extends HttpServlet {
             out.println("<h1><u> Url </u>at " + getUrl(request) + "</h1>");
             out.println("</body>");
             out.println("</html>");
-            out.println(lc.size());
             Method m = getMethodFromUrl(getUrl(request));
             Class c = getClassFromUrl(getUrl(request));
             Object o = m.invoke(c.newInstance(), null);
             out.println(o);
             if (o instanceof ModelView) {
-                out.println("lll");
                 ModelView mv = (ModelView)o;
                 RequestDispatcher dispatcher = request.getRequestDispatcher(mv.getView());
                 dispatcher.forward(request, response);
@@ -143,7 +158,7 @@ public class FrontServlet extends HttpServlet {
     
     public Method getMethodFromUrl(String url) throws Exception {
         
-        List<Class> lc = Utils.getClassFrom("etu2025.model");
+        List<Class> lc = getClassList();
         for (Class c : lc) {
             if (c.getSimpleName().equals(getMappingUrls().get(url).getClassName())) {
                 for (Method m : c.getDeclaredMethods()) {
@@ -157,7 +172,7 @@ public class FrontServlet extends HttpServlet {
     }
     public Class getClassFromUrl(String url) throws Exception {
         
-        List<Class> lc = Utils.getClassFrom("etu2025.model");
+        List<Class> lc = getClassList();
         for (Class c : lc) {
             if (c.getSimpleName().equals(getMappingUrls().get(url).getClassName())) {
                 for (Method m : c.getDeclaredMethods()) {
@@ -167,7 +182,7 @@ public class FrontServlet extends HttpServlet {
                 }
             }
         }
-        throw new Exception("Method not found");
+        throw new Exception("Class not found");
     }
     
     
