@@ -4,6 +4,7 @@
  */
 package etu2025.model;
 
+import etu2025.framework.ModelView;
 import etu2025.framework.annotation.url;
 
 /**
@@ -22,8 +23,13 @@ public class Personne {
     }
     
     @url("/prenom")
-    public void getPrenom() {
+    public ModelView getPrenom() {
         System.out.println("Malalaniaina");
+        System.out.println("Sir");
+
+        ModelView mv = new ModelView("index.jsp");
+        System.out.println("Noe");
+        return mv;
     }
 
     @url("/nom")
