@@ -101,6 +101,11 @@ public class FrontServlet extends HttpServlet {
             if (o instanceof ModelView) {
                 ModelView mv = (ModelView)o;
                 RequestDispatcher dispatcher = request.getRequestDispatcher(mv.getView());
+                for (Map.Entry<String, Object> entry : mv.getData().entrySet()) {
+                    String key = String.valueOf(entry.getKey());
+                    Object val = entry.getValue();
+                    request.setAttribute(key, val);
+                }
                 dispatcher.forward(request, response);
             }
         } catch (Exception e) {
