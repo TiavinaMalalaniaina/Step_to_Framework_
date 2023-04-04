@@ -24,11 +24,10 @@ public class Personne {
     
     @url("/prenom")
     public ModelView getPrenom() {
-        System.out.println("Malalaniaina");
-        System.out.println("Sir");
-
         ModelView mv = new ModelView("index.jsp");
-        System.out.println("Noe");
+        mv.addItem("nom", "Tiavina");
+        mv.addItem("prenom", "Malalaniaina");
+        mv.addItem("age", 18);
         return mv;
     }
 
