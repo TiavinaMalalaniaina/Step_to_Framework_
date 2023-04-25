@@ -7,6 +7,7 @@ package etu2025.framework.util;
 import etu2025.framework.Mapping;
 import etu2025.framework.annotation.url;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,7 +45,26 @@ public class Utils {
         return mappingUrls;
     }
     
+    public static HashMap<String, Method> getSetters(Class<?> c) {
+        HashMap<String, Method> setter = new HashMap<>();
+        Field[] fields = c.getDeclaredFields();
+        Method[] methods = c.getDeclaredMethods();
+        for (Field field : fields) {
+            for (Method method : methods) {
+                if ( method.getName().equals(getSetterQuery(field.getName()))) {
+                    setter.put(field.getName(), method);
+                }
+            }
+        }
+        return setter;
+    }
     
-
+    public static String getSetterQuery(String method) {
+        String t1 = method.substring(0, 1);
+        String t2 = method.substring(1);
+        t1 = t1.toUpperCase();
+        return "set" + t1 + t2;
+    }
+    
 
 }

@@ -38,7 +38,7 @@ public class Personne {
     
      @url("/save")
     public ModelView save() {
-        ModelView mv = new ModelView("index.jsp");
+        ModelView mv = new ModelView("");
         mv.addItem("nom", getNom());
         mv.addItem("prenom", getPrenom());
         mv.addItem("age", 18);
