@@ -5,6 +5,10 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+    String nom = String.valueOf(request.getAttribute("nom"));
+    String prenom = String.valueOf(request.getAttribute("prenom"));
+%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,5 +17,7 @@
     </head>
     <body>
         <h1>Testing Model View</h1>
+        <p><%= nom %></p>
+        <p><%= prenom %></p>
     </body>
 </html>
