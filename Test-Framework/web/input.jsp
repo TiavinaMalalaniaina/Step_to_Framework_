@@ -14,10 +14,11 @@
     <body>
         <h1>INPUT</h1>
         <form action="save" method="post">
-            <input type="text" name="nom" value="Tiavina">
-            <input type="text" name="prenom" value="Malalaniaina">
-            <input type="number" name="age" value="18">
+            <input type="text" name="nom" value="RAMIANDRISOA">
+            <input type="text" name="prenom" value="Tiavina">
+            <input type="date" name="dtn" >
             <input type="submit" value="Envoyer">
+            
         </form>
     </body>
 </html>

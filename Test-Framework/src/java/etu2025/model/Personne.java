@@ -6,6 +6,9 @@ package etu2025.model;
 
 import etu2025.framework.ModelView;
 import etu2025.framework.annotation.url;
+import etu2025.framework.util.Utils;
+import java.util.Date;
+import java.text.ParseException;
 
 /**
  *
@@ -14,6 +17,8 @@ import etu2025.framework.annotation.url;
 public class Personne {
     String nom;
     String prenom;
+    Integer age;
+    Date dtn;
 
     public Personne() {}
     
@@ -22,7 +27,7 @@ public class Personne {
     }
     
     @url("/find-all")
-    public ModelView findAll() {
+    public ModelView findAll() throws ParseException {
         ModelView mv = new ModelView("index.jsp");
         mv.addItem("nom", "Tiavina");
         mv.addItem("prenom", "Malalaniaina");
@@ -41,7 +46,8 @@ public class Personne {
         ModelView mv = new ModelView("index.jsp");
         mv.addItem("nom", getNom());
         mv.addItem("prenom", getPrenom());
-        mv.addItem("age", 18);
+        mv.addItem("age", getAge());
+        mv.addItem("dtn", getDtn());
         return mv;
     }
 
@@ -62,10 +68,26 @@ public class Personne {
         this.prenom = prenom;
     }
     
+    public Integer getAge() {
+        return age;
+    }
+    
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+    
+    public Date getDtn() {
+        return dtn;
+    }
+    
+    public void setDtn(Date dtn) {
+        this.dtn = dtn;
+    }
+    
     public String str() {
         return "Personne{nom="+getNom()+"prenom"+getPrenom()+"}";
     }
-    
+
     
     
     
