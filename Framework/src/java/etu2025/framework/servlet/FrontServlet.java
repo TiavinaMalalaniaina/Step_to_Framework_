@@ -91,6 +91,8 @@ public class FrontServlet extends HttpServlet {
             Object temp = set(request, c);
             Method m = getMethodFromUrl(getUrl(request));
             
+            
+            
             Object o = m.invoke(temp, null);    
             prepareDispatch(request, response, o);
         } catch (Exception e) {
