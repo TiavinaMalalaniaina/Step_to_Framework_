@@ -8,7 +8,6 @@ import etu2025.framework.annotation.url;
 import etu2025.framework.util.Utils;
 import etu2025.framework.Mapping;
 import etu2025.framework.ModelView;
-import etu2025.model.Personne;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletConfig;
 import java.io.IOException;
@@ -90,8 +89,6 @@ public class FrontServlet extends HttpServlet {
             
             Object temp = set(request, c);
             Method m = getMethodFromUrl(getUrl(request));
-            
-            
             
             Object o = m.invoke(temp, null);    
             prepareDispatch(request, response, o);
