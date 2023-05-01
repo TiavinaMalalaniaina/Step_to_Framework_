@@ -5,6 +5,7 @@
 package etu2025.framework;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -16,6 +17,10 @@ public class ModelView {
 
     public ModelView(String view) {
         setView(view);
+        setData(new HashMap<String, Object>());
+    }
+    
+    public ModelView()  {
         setData(new HashMap<String, Object>());
     }
     
@@ -38,6 +43,14 @@ public class ModelView {
     
     public void addItem(String key, Object value) {
         getData().put(key, value);
+    }
+    
+    public void listAll() {
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            Object key = entry.getKey();
+            Object val = entry.getValue();
+            System.out.println(key + "====" + val);
+        }
     }
 
 }

@@ -83,33 +83,18 @@ public class FrontServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try  {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet FrontServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1> <u>Servlet FrontServlet</u> at " + request.getContextPath() + "</h1>");
-            out.println("<h1><u>RequestURI</u> at " + request.getRequestURI()+ "</h1>");
-            out.println("<h1><u> Url </u>at " + getUrl(request) + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-            Method m = getMethodFromUrl(getUrl(request));
+            out.println("<h1>ERROR 404 : FILE NOT FOUND</h1>");
             Class c = getClassFromUrl(getUrl(request));
-            Object o = m.invoke(c.newInstance(), null);
-            out.println(o);
-            if (o instanceof ModelView) {
-                ModelView mv = (ModelView)o;
-                RequestDispatcher dispatcher = request.getRequestDispatcher(mv.getView());
-                for (Map.Entry<String, Object> entry : mv.getData().entrySet()) {
-                    String key = String.valueOf(entry.getKey());
-                    Object val = entry.getValue();
-                    request.setAttribute(key, val);
-                }
-                dispatcher.forward(request, response);
-            }
+            out.println(c.getName() + "<br>");
+            
+            Object temp = set(request, c);
+            Method m = getMethodFromUrl(getUrl(request));
+            
+            Object o = m.invoke(temp, null);    
+            prepareDispatch(request, response, o);
         } catch (Exception e) {
             e.printStackTrace();
+            out.println(e);
         }
     }
 
@@ -162,7 +147,6 @@ public class FrontServlet extends HttpServlet {
     }
     
     public Method getMethodFromUrl(String url) throws Exception {
-        
         List<Class> lc = getClassList();
         for (Class c : lc) {
             if (c.getSimpleName().equals(getMappingUrls().get(url).getClassName())) {
@@ -175,8 +159,8 @@ public class FrontServlet extends HttpServlet {
         }
         throw new Exception("Method not found");
     }
+    
     public Class getClassFromUrl(String url) throws Exception {
-        
         List<Class> lc = getClassList();
         for (Class c : lc) {
             if (c.getSimpleName().equals(getMappingUrls().get(url).getClassName())) {
@@ -190,8 +174,41 @@ public class FrontServlet extends HttpServlet {
         throw new Exception("Class not found");
     }
     
+    public Object set(HttpServletRequest request, Class c) throws Exception {
+        
+            HashMap<String, Method> setter = Utils.getSetters(c);
+            Map<String, String[]> param = request.getParameterMap();
+
+            Object temp = c.newInstance();
+//            
+            for (Map.Entry<String, String[]> entry : param.entrySet()) {
+                String key = entry.getKey();
+                String[] parameter = entry.getValue();
+                if (!setter.containsKey(key)) {
+                    continue;
+                }
+
+                Method setTemp = setter.get(key);
+                Class<?>[] setParam = setTemp.getParameterTypes();
+                setTemp.invoke(temp, (Object) Utils.CastTo(parameter[0],  setParam[0]));
+            }
+            return temp;
+    }
     
     
-    
-    
+    public void prepareDispatch(HttpServletRequest request, HttpServletResponse response, Object o) throws ServletException, IOException {
+         if (o instanceof ModelView) {
+                ModelView mv = (ModelView)o;
+                mv.listAll();
+                RequestDispatcher dispatcher = request.getRequestDispatcher(mv.getView());
+                for (Map.Entry<String, Object> entry : mv.getData().entrySet()) {
+                    String key = String.valueOf(entry.getKey());
+                    Object val = entry.getValue();
+                    request.setAttribute(key, val);
+                }
+                dispatcher.forward(request, response);
+            }
+    }
 }
+
+
