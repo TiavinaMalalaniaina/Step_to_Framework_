@@ -12,18 +12,6 @@
         <servlet-name>FrontServlet</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>FrontServlet</servlet-name>
-        <url-pattern>/update</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>FrontServlet</servlet-name>
-        <url-pattern>/insert</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>FrontServlet</servlet-name>
-        <url-pattern>/delete</url-pattern>
-    </servlet-mapping>
     <session-config>
         <session-timeout>
             30

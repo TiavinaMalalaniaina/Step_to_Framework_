@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,14 +84,33 @@ public class FrontServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try  {
-            out.println("<h1>ERROR 404 : FILE NOT FOUND</h1>");
+            out.println("<h1>ERROR 404 : CONTROLLER NOT FOUND</h1>");
             Class c = getClassFromUrl(getUrl(request));
             out.println(c.getName() + "<br>");
             
             Object temp = set(request, c);
             Method m = getMethodFromUrl(getUrl(request));
             
-            Object o = m.invoke(temp, null);    
+            Parameter[] paramSetter = m.getParameters();
+            HashMap<String, Class<?>> hParam = new HashMap<String, Class<?>>(); 
+            
+            for (Parameter p : paramSetter) {
+                hParam.put(p.getName(), p.getType());
+            }
+            Object[] oParam = new Object[paramSetter.length];
+            int indexO = 0;
+            Map<String, String[]> param = request.getParameterMap();
+            for (Map.Entry<String, Class<?>> entry : hParam.entrySet()) {
+                Object key = entry.getKey();
+                if (param.containsKey(key)) {
+                    oParam[indexO] = (Object) Utils.CastTo(param.get(key), entry.getValue());    
+                } else {
+                    oParam[indexO] = null;
+                }
+                indexO++;
+            }
+            Object o = m.invoke(temp, oParam);    
+   
             prepareDispatch(request, response, o);
         } catch (Exception e) {
             e.printStackTrace();
@@ -194,6 +214,8 @@ public class FrontServlet extends HttpServlet {
             }
             return temp;
     }
+    
+   
     
     
     public void prepareDispatch(HttpServletRequest request, HttpServletResponse response, Object o) throws ServletException, IOException {
