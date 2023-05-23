@@ -204,13 +204,11 @@ public class FrontServlet extends HttpServlet {
             for (Map.Entry<String, String[]> entry : param.entrySet()) {
                 String key = entry.getKey();
                 String[] parameter = entry.getValue();
-                if (!setter.containsKey(key)) {
-                    continue;
+                if (setter.containsKey(key)) {
+                    Method setTemp = setter.get(key);
+                    Class<?>[] setParam = setTemp.getParameterTypes();
+                    setTemp.invoke(temp, (Object) Utils.CastTo(parameter[0],  setParam[0]));
                 }
-
-                Method setTemp = setter.get(key);
-                Class<?>[] setParam = setTemp.getParameterTypes();
-                setTemp.invoke(temp, (Object) Utils.CastTo(parameter[0],  setParam[0]));
             }
             return temp;
     }

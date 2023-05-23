@@ -1,8 +1,14 @@
-:: CrÃ©ation du dossier temporaire temp
+set tomcat_root=D:\Logiciel\Apache_Software_Foundation\Tomcat_10.0
+set project_root=D:\Etude\L2\S4\INF209-Web_dynamique\project\Step_to_Framework\Test-Framework
+set fw_root=D:\Etude\L2\S4\INF209-Web_dynamique\project\Step_to_Framework\Framework
+set lib_root=.\temp\WEB-INF\lib\fw.jar
+
+:: Création du dossier temporaire temp
 mkdir temp
 cd temp
 
-:: CrÃ©ation de la structure du fichier
+
+:: Création de la structure du fichier
 mkdir WEB-INF
 mkdir src
 cd WEB-INF
@@ -10,23 +16,23 @@ mkdir classes
 mkdir lib
 cd ../../
 
+
 :: Compilation du modele
 copy fw.jar .\temp\WEB-INF\lib
-for /r .\Test-Framework\ %%f in (*.java) do copy %%f .\temp\src
-javac -cp .\temp\WEB-INF\lib\fw.jar -d .\temp\WEB-INF\classes .\temp\src\*.java
-rmdir /S /Q .\temp\src
+for /r %project_root%\ %%f in (*.java) do copy %%f .\temp\src
+javac -cp %lib_root% -parameters -d .\temp\WEB-INF\classes .\temp\src\*.java
+::rmdir /S /Q .\temp\src
+
 
 :: Copie des Autre fichiers
-copy .\Test-Framework\web\input.jsp .\temp\
-copy .\Test-Framework\web\index.jsp .\temp\
+copy .\Test-Framework\web\*.jsp .\temp\
 copy .\Test-Framework\web\WEB-INF\web.xml .\temp\WEB-INF\
 
-:: DÃ©ploiement vers tomcat
+
+:: Déploiement vers tomcat
 jar -cvf test_fw.war -C .\temp\ .
-copy test_fw.war D:\Logiciel\Apache_Software_Foundation\Tomcat_10.0\webapps\
+copy test_fw.war %tomcat_root%\webapps\
+
 
 :: Supprimer le dossier temp
-rmdir /S /Q .\temp
-
-
-
+::rmdir /S /Q .\temp
