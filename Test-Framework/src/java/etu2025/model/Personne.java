@@ -6,7 +6,6 @@ package etu2025.model;
 
 import etu2025.framework.ModelView;
 import etu2025.framework.annotation.url;
-import etu2025.framework.util.Utils;
 import java.util.Date;
 import java.text.ParseException;
 
@@ -41,6 +40,17 @@ public class Personne {
         return mv;
     }
     
+    
+    @url("/test-param")
+    public ModelView Test(String nom, String prenom) {
+        ModelView mv = new ModelView("index.jsp");
+        mv.addItem("nom", nom);
+        mv.addItem("prenom", prenom);
+        mv.addItem("age", 18);
+        return mv;
+    }
+    
+    
      @url("/save")
     public ModelView save() {
         ModelView mv = new ModelView("index.jsp");
@@ -50,7 +60,7 @@ public class Personne {
         mv.addItem("dtn", getDtn());
         return mv;
     }
-
+    
     @url("/nom")
     public String getNom() {
         return nom;

@@ -1,0 +1,50 @@
+.Voici les packages a importé:
+	import etu2025.framework.ModelView;
+	import etu2025.framework.annotation.url;
+	import java.text.ParseException;
+
+
+.    
+    @url("/find-all")
+    public ModelView findAll(String arg0, String arg1) throws ParseException {
+        ModelView mv = new ModelView("index.jsp");
+        mv.addItem("nom", arg0);
+        mv.addItem("prenom", arg1);
+        mv.addItem("age", 18);
+        return mv;
+    }
+
+.Le nom des input dans les formulaires sont récupéré dans les attributs de même nom dans la classe appelant
+
+.@url est l'url appelé pour pouvoir utilisé la fonction
+
+.addItem permet d'ajouter un objet à afficher vers la vue
+
+.Le nom des arguments doivent être de la forme (arg0, arg1,...,) pour les JDK < 8
+
+.Les paramètres des fonctions ne doivent pas être des types primitifs(int => Integer, double, => Double, ...)
+
+.Voici ce qu'il doit y avoir dans le fichier web.xml (Juste à copier)
+
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <servlet>
+        <servlet-name>FrontServlet</servlet-name>
+        <servlet-class>etu2025.framework.servlet.FrontServlet</servlet-class>
+        <init-param>
+            <param-name>model-package</param-name>
+            <param-value>etu2025.model</param-value>  //Ici ce trouve le package où doit se trouver les modèles (MODIFIABLE)
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FrontServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+</web-app>
+
+.Les modèles doivent être généré dans le package annoncés dans le init-param du web.xml

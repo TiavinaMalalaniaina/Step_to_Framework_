@@ -102,6 +102,24 @@ public class Utils {
         }
         return result;
     }
+    
+    public static <T extends Object> T CastTo(String[] initial, Class<?> type) throws ParseException {
+        String init = initial[0];
+        T result = null;
+        if(type == Date.class) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            result = (T) format.parse(init);
+        } else if (type == Integer.class) {
+            result = (T) Integer.valueOf(init);
+        } else if (type == Float.class) {
+            result = (T) Float.valueOf(init);
+        } else if (type == Double.class) {
+            result = (T) Double.valueOf(init);
+        } else {
+            result = (T) init;
+        }
+        return result;
+    }
    
     
 }
