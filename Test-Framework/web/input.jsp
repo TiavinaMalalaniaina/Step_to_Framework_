@@ -13,10 +13,23 @@
     </head>
     <body>
         <h1>INPUT</h1>
-        <form action="save" method="post">
+        <form action="save.action" method="post">
+            <p>
+                
             <input type="text" name="nom" value="RAMIANDRISOA">
             <input type="text" name="prenom" value="Tiavina">
             <input type="date" name="dtn" >
+            </p>
+            <p>
+                
+                <input type="checkbox" name="loisir" value="basket"> basket
+            </p>
+            <p>
+                <input type="checkbox" name="loisir" value="foot"> foot
+            </p>
+            <p>
+                <input type="checkbox" name="loisir" value="volley"> volley
+            </p>
             <input type="submit" value="Envoyer">
             
         </form>

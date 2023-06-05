@@ -7,6 +7,7 @@ package etu2025.framework.util;
 import etu2025.framework.Mapping;
 import etu2025.framework.annotation.url;
 import java.io.File;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -102,6 +103,15 @@ public class Utils {
         }
         return result;
     }
+    
    
+    public static <T extends Object> T[] CastArray(String[] init, Class<?> type_array) throws ParseException {
+        Class<?> type = type_array.getComponentType();
+        T[] result = (T[]) Array.newInstance(type, init.length);
+        for(int i=0; i < init.length; i++) {
+            result[i] = CastTo(init[i], type);
+        }
+        return result;
+    }
     
 }

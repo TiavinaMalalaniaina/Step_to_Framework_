@@ -10,6 +10,7 @@
     String nom = String.valueOf(request.getAttribute("nom"));
     String prenom = String.valueOf(request.getAttribute("prenom"));
     Object dtn = request.getAttribute("dtn");
+    String[] loisir = (String[]) request.getAttribute("loisir");
 %>
 <!DOCTYPE html>
 <html>
@@ -22,5 +23,11 @@
         <p><%= nom %></p>
         <p><%= prenom %></p>
         <p><%= dtn %></p>
+        <h3> Loisir </h3>
+        <ul>
+            <% for (String l : loisir ) {%>
+            <li><%= l %></li>
+            <% } %>
+        </ul>
     </body>
 </html>

@@ -187,10 +187,17 @@ public class FrontServlet extends HttpServlet {
                 if (!setter.containsKey(key)) {
                     continue;
                 }
-
                 Method setTemp = setter.get(key);
                 Class<?>[] setParam = setTemp.getParameterTypes();
-                setTemp.invoke(temp, (Object) Utils.CastTo(parameter[0],  setParam[0]));
+                if (setParam[0].isArray()) {
+                    setTemp.invoke(temp, (Object) Utils.CastArray(parameter,  setParam[0]));
+                    System.out.println("ARRAY IS THERE");
+                    System.out.println(setParam[0].getClass().getCanonicalName());
+                } else {
+                    
+
+                    setTemp.invoke(temp, (Object) Utils.CastTo(parameter[0],  setParam[0]));
+                }
             }
             return temp;
     }

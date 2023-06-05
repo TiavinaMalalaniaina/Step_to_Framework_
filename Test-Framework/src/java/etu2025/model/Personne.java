@@ -18,6 +18,7 @@ public class Personne {
     String nom;
     String prenom;
     Integer age;
+    String[] loisir;
     Date dtn;
 
     public Personne() {}
@@ -26,7 +27,7 @@ public class Personne {
         setNom(nom);
     }
     
-    @url("/find-all")
+    @url("/find-all.action")
     public ModelView findAll() throws ParseException {
         ModelView mv = new ModelView("index.jsp");
         mv.addItem("nom", "Tiavina");
@@ -35,23 +36,23 @@ public class Personne {
         return mv;
     }
     
-    @url("/input")
+    @url("/input.action")
     public ModelView InputSave() {
         ModelView mv = new ModelView("input.jsp");
         return mv;
     }
     
-     @url("/save")
+     @url("/save.action")
     public ModelView save() {
         ModelView mv = new ModelView("index.jsp");
         mv.addItem("nom", getNom());
         mv.addItem("prenom", getPrenom());
         mv.addItem("age", getAge());
+        mv.addItem("loisir", getLoisir());
         mv.addItem("dtn", getDtn());
         return mv;
     }
 
-    @url("/nom")
     public String getNom() {
         return nom;
     }
@@ -62,6 +63,14 @@ public class Personne {
 
     public String getPrenom() {
         return prenom;
+    }
+
+    public String[] getLoisir() {
+        return loisir;
+    }
+
+    public void setLoisir(String[] loisir) {
+        this.loisir = loisir;
     }
 
     public void setPrenom(String prenom) {
